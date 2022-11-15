@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Chat</title>
+    <link rel="stylesheet" href="/main.css" type="text/css">
+    <link rel="icon" type="image/x-icon" href="https://freepngimg.com/save/158649-chat-icon-download-free-image/512x512">
+    <script src="../../socket.io/socket.io.js"></script>
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+</head>
+
+<body>
+    <div class="main">
+        <ul id="messages"></ul>
+        <form action="/" method="POST" id="chatForm">
+            <textarea id="txt" autocomplete="off" autofocus="on"
+                placeholder="type your message here..." ></textarea>
+            <button>Send</button>
+        </form>
+    </div>
+    <script>
+        let permission = Notification.permission;
+        function showNotification() {
+            if(document.visibilityState === "visible") {
+                return;
+            }
+
+            var title = "New message";
+            icon = "https://freepngimg.com/save/158649-chat-icon-download-free-image/512x512";
+            var body = "You have a new message";
+            var notification = new Notification(title, { body, icon });
+
+            notification.onclick = () => {
+                notification.close();
+                window.parent.focus();
+            }
+        }
+
+        function requestAndShowPermission() {
+            Notification.requestPermission(function (permission) {
+                if (permission === "granted") {
+                    showNotification();
+                }
+            });
+        }
+        
+        var socket = io.connect('http://172.16.0.16:8083');
+        // submit text message without reload/refresh the page
+        $('form').submit(function (e) {
+            e.preventDefault(); // prevents page reloading
+            socket.emit('chat_message', $('#txt').val());
+            $('#txt').val('');
+            return false;
+        });
+        // append the chat text message
+        socket.on('chat_message', function (msg) {
+            $('#messages').append($('<li>').html(msg));
+            if (permission === "granted") {
+                showNotification();
+            } else if(permission === "default"){
+                requestAndShowPermission();
+            }
+        });
+        // append text if someone is online
+        socket.on('is_online', function (username) {
+            $('#messages').append($('<li>').html(username));
+        });
+        // ask username
+        var username = prompt('Please tell me your name');
+        socket.emit('username', username);
+
+        
+    </script>
+</body>
+
+</html>
