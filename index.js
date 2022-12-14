@@ -6,10 +6,19 @@ const io = require("socket.io")(http, {
       origin: "*"
     }
 });
+const PORT = 8083;
+
+app.set("view engine", "ejs");
 
 app.use(express.static(__dirname + "/public"));
 app.get('/', function(req, res) {
-    res.render('index.ejs');
+    const protocol = req.protocol;
+    const host = req.hostname;
+    const port = process.env.port | PORT;
+
+    const fullUrl = `${protocol}://${host}:${port}`;
+
+    res.render('index.ejs', {url: fullUrl});
 });
 
 io.sockets.on('connection', function(socket) {
@@ -18,9 +27,9 @@ io.sockets.on('connection', function(socket) {
         io.emit('is_online', '🔵 <i>' + socket.username + ' join the chat..</i>');
     });
 
-    socket.on('disconnect', function(username) {
-        io.emit('is_online', '🔴 <i>' + socket.username + ' left the chat..</i>');
-    })
+    // socket.on('disconnect', function(username) {
+    //     io.emit('is_online', '🔴 <i>' + socket.username + ' left the chat..</i>');
+    // })
 
     socket.on('chat_message', function(message) {
         io.emit('chat_message', '<strong>' + socket.username + '</strong>: ' + message);
