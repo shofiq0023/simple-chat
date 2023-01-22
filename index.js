@@ -21,6 +21,10 @@ app.get('/', function(req, res) {
     res.render('index.ejs', {url: fullUrl});
 });
 
+const getTime = () => {
+    return new Date().toLocaleString('en-IN');
+}
+
 io.sockets.on('connection', function(socket) {
     socket.on('username', function(username) {
         socket.username = username;
@@ -32,7 +36,7 @@ io.sockets.on('connection', function(socket) {
     // })
 
     socket.on('chat_message', function(message) {
-        io.emit('chat_message', '<strong>' + socket.username + '</strong>: ' + message);
+        io.emit('chat_message', `<strong>${socket.username}</strong>: <span class='small'>(${getTime()})</span> <br><hr>${message}`);
     });
 
 });
