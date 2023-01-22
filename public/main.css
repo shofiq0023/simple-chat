@@ -53,6 +53,8 @@ form button {
     padding: 5px 10px;
     white-space: pre;
     overflow-x: auto;
+    margin-bottom: 5px;
+    border-radius: 10px;
 }
 
 #messages li:nth-child(odd) {
