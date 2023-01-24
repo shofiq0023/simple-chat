@@ -36,7 +36,7 @@ io.sockets.on('connection', function(socket) {
     // })
 
     socket.on('chat_message', function(message) {
-        io.emit('chat_message', `<strong>${socket.username}</strong>: <span class='small'>(${getTime()})</span> <br><hr>${message}`);
+        io.emit('chat_message', `<strong>${socket.username}</strong>: <span class='small'>(${getTime()})</span> <br><hr><div class='pad'>${message}</div>`);
     });
 
 });
