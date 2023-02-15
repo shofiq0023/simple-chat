@@ -14,7 +14,7 @@
         <ul id="messages"></ul>
         <form action="/" method="POST" id="chatForm">
             <textarea id="txt" autocomplete="off" autofocus="on"
-                placeholder="type your message here..." ></textarea>
+                placeholder="type your message here..." class="msg"></textarea>
             <button>Send <span></span> </button>
         </form>
     </div>
@@ -48,6 +48,10 @@
         var socket = io.connect('http://172.16.0.16:8083');
         // submit text message without reload/refresh the page
         $('form').submit(function (e) {
+            if ($('.msg').val().length === 0) {
+                alert("Enter a message");
+                return false;
+            }
             e.preventDefault(); // prevents page reloading
             socket.emit('chat_message', $('#txt').val());
             $('#txt').val('');
